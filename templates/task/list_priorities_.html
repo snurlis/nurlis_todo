@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block title %}Priorities{% endblock title %}
+
+{% block content %}
+    <div class="priorities-list">
+        <h2>Priorities</h2>
+
+        {% if priorities %}
+            <table class="priority-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Tasks Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for priority in priorities %}
+                        <tr>
+                            <td>
+                                {% if priority.tasks.count > 0 %}
+                                    <a href="{% url 'tasks-by-priority' priority.id %}">{{ priority.name }}</a>
+                                {% else %}
+                                    {{ priority.name }}
+                                {% endif %}
+                            </td>
+                            <td>{{ priority.tasks.count }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No priorities available.</p>
+        {% endif %}
+    </div>
+
+    <style>
+        .priorities-list {
+            font-family: 'Helvetica Neue', sans-serif;
+            padding: 20px;
+            background-color: #f0f4f8;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .priorities-list h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #1673d1;
+            text-align: center;
+        }
+
+        .priority-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        .priority-table th, .priority-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .priority-table th {
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .priorities-list a {
+            color: #1673d1;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .priorities-list a:hover {
+            color: #1673d1;
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .priority-table {
+                font-size: 14px;
+            }
+
+            .priorities-list h2 {
+                font-size: 20px;
+            }
+        }
+    </style>
+{% endblock content %}

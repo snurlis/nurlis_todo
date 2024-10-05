@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Task{% endblock title %}
+
+{% block content %}
+    <div class="form-container">
+        <h2>Create New Task</h2>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            я<div class="form-group">
+                <label for="id_=title">Title</label>
+                {{ form.title }}
+            </div>
+
+            <div class="form-group">
+                <label for="id_description">Description</label>
+                {{ form.description }}
+            </div>
+
+            <div class="form-group">
+                <label for="id_status">Status</label>
+                {{ form.status }}
+            </div>
+
+            <div class="form-group">
+                <label for="id_due_date">Due Date</label>
+                {{ form.due_date }}
+            </div>
+
+            <div class="form-group">
+                <label for="id_category">Category</label>
+                {{ form.category }}
+            </div>
+
+            <div class="form-group">
+                <label for="id_priority">Priority</label>
+                {{ form.priority }}
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn btn-primary">
+                    Create Task
+                </button>
+
+                <a href="{% url 'list-task' %}" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+        <br>
+    </div>
+
+    <style>
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Новый шрифт для всего тела */
+        background-color: #eef2f3; /* Светлый фон для всей страницы */
+        color: #333; /* Основной цвет текста */
+        margin: 0;
+        padding: 0;
+    }
+
+    .form-container {
+        max-width: 400px; /* Уменьшенная ширина */
+        margin: 60px auto; /* Центрирование с отступом сверху */
+        background-color: #fff; /* Белый фон */
+        padding: 30px; /* Увеличенный внутренний отступ */
+        border-radius: 10px; /* Сглаженные углы */
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); /* Более заметная тень */
+        border: 1px solid #ddd; /* Лёгкая граница */
+    }
+
+    .form-container h2 {
+        text-align: center;
+        margin-bottom: 20px; /* Уменьшенный отступ снизу */
+        font-size: 24px; /* Увеличенный размер шрифта */
+        color: #4a4a4a; /* Темно-серый цвет текста */
+    }
+
+    .form-group {
+        margin-bottom: 15px; /* Увеличенный отступ между группами */
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px; /* Уменьшенный отступ снизу */
+        font-weight: 600; /* Полужирный текст */
+        color: #666; /* Серый цвет текста для меток */
+    }
+
+    input, textarea, select {
+        width: 100%;
+        padding: 12px; /* Увеличенный внутренний отступ */
+        margin-bottom: 10px; /* Увеличенный отступ снизу */
+        border-radius: 6px; /* Сглаженные углы */
+        border: 1px solid #ccc; /* Светлый цвет границы */
+        transition: border-color 0.3s, box-shadow 0.3s; /* Плавный переход цвета границы */
+        font-size: 16px; /* Размер шрифта */
+    }
+
+    input:focus, textarea:focus, select:focus {
+        border-color: #040202; /* Цвет границы при фокусе */
+        box-shadow: 0 0 5px rgba(0, 86, 179, 0.5); /* Лёгкое свечение при фокусе */
+        outline: none; /* Убираем стандартный контур */
+    }
+
+    .btn {
+        padding: 12px 25px; /* Увеличенный внутренний отступ */
+        color: white;
+        border: none;
+        border-radius: 5px; /* Сглаженные углы */
+        cursor: pointer; /* Указатель при наведении */
+        font-size: 16px; /* Размер шрифта */
+        transition: background-color 0.3s, transform 0.2s; /* Плавный переход цвета фона */
+    }
+
+    .btn-primary {
+        background-color: #040202; /* Цвет для основной кнопки */
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3; /* Более тёмный оттенок при наведении */
+        transform: translateY(-2px); /* Поднятие кнопки при наведении */
+    }
+
+    .btn-secondary {
+        background-color: #343a40; /* Цвет для вторичной кнопки */
+    }
+
+    .btn-secondary:hover {
+        background-color: #23272b; /* Более тёмный оттенок при наведении */
+        transform: translateY(-2px); /* Поднятие кнопки при наведении */
+    }
+</style>
+{% endblock content %}
