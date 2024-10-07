@@ -1,33 +1,26 @@
 {% extends 'base.html' %}
 
-{% block title %}Список задач{% endblock title %}
+{% block title %}Tasks List{% endblock title %}
 
 {% block content %}
     <div class="tasks-list">
-        <h2>Task</h2>
-        <a href="{% url 'create-task' %}" class="btn btn-primary">Создать</a>
+        <h2>Tasks</h2>
+        <a href="{% url 'create-task' %}" class="btn btn-primary" style="margin-bottom: 20px;">Создать</a>
 
-        <form method="GET" class="search-form" id="filter-form">
-            <input type="text" name="search_task" placeholder="Поиск по задачам" value="{{ request.GET.search_task }}">
-            <select name="category" id="category">
-                <option value="">Все категории</option>
-                {% for category in categories %}
-                    <option value="{{ category.id }}"
-                            {% if category.id|stringformat:"d" == request.GET.category %}selected{% endif %}>{{ category.name }}</option>
-                {% endfor %}
-            </select>
-            <select name="priority" id="priority">
-                <option value="">Все приоритеты</option>
-                {% for priority in priorities %}
-                    <option value="{{ priority.id }}"
-                            {% if priority.id|stringformat:"d" == request.GET.priority %}selected{% endif %}>{{ priority.name }}</option>
-                {% endfor %}
-            </select>
-            <button type="submit" class="btn btn-search">Поиск</button>
+        <form method="GET" id="filter-form" style="margin-bottom: 20px; display: flex; align-items: center;">
+            <div style="display: flex; align-items: center; margin-right: 10px;">
+                {{ form.search_task }}
+                <button type="submit" class="btn btn-search" style="margin-left: 10px;">Поиск</button>
+            </div>
+            <div style="display: flex; align-items: center;">
+                {{ form.category }}
+                {{ form.priority }}
+            </div>
+            <a href="{% url 'list-task' %}" class="btn btn-clear" style="margin-left: 10px;">Clear</a>
         </form>
 
         {% if tasks %}
-            <table class="task-table">
+            <table>
                 <thead>
                 <tr>
                     <th>Title</th>
@@ -41,155 +34,155 @@
                 </thead>
                 <tbody>
                 {% for task in tasks %}
-                    <tr {% if task.due_date < today %}class="overdue"{% endif %}>
+                    <tr {% if task.due_date < today and not task.status %}style="background-color: #f8d7da;" {% endif %}>
                         <td>{{ task.title }}</td>
                         <td>{{ task.description|default:"Нет описания" }}</td>
                         <td>
-                                <span class="{% if task.status %}status-completed{% else %}status-pending{% endif %}">
-                                    {% if task.status %}Завершено{% else %}В ожидании{% endif %}
-                                </span>
+                            {% if task.status %}
+                                <span class="status-completed">Completed</span>
+                            {% else %}
+                                <span class="status-pending">В ожидании</span>
+                            {% endif %}
                         </td>
                         <td>{{ task.due_date }}</td>
                         <td>{{ task.category.name }}</td>
                         <td>{{ task.priority.name }}</td>
                         <td>
-                            <a href="{% url 'edit-task' task.id %}" class="btn btn-edit">Редактировать</a>
+                            <a href="{% url 'edit-task' task.id %}" class="btn btn-edit">Edit</a>
                             <a href="{% url 'delete-task' task.id %}" class="btn btn-delete"
-                               onclick="return confirm('Вы уверены, что хотите удалить эту задачу?');">Удалить</a>
+                               onclick="return confirm('Are you sure you want to delete this task?');">Delete</a>
+                            {% if not task.status and task.due_date >= today %}
+                                <a href="{% url 'toggle-task-status' task.id %}" class="btn btn-complete">Complete</a>
+                            {% endif %}
                         </td>
                     </tr>
                 {% endfor %}
                 </tbody>
             </table>
         {% else %}
-            <p>Задачи отсутствуют.</p>
+            <p>No tasks available.</p>
         {% endif %}
     </div>
 
     <style>
-        body {
-            font-family: 'Helvetica Neue', sans-serif;
-            background-color: white;
-            color: #333;
-            margin: 0;
-            padding: 20px;
-        }
-
         .tasks-list h2 {
-            font-size: 32px;
-            margin-bottom: 30px;
-            text-align: center;
-            color: #4A90E2;
+            font-size: 24px;
+            margin-bottom: 20px;
         }
 
-        .search-form {
+        form {
             display: flex;
-            justify-content: center;
-            margin-bottom: 30px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .btn-clear {
+            background-color: #6c757d;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+
+        .btn-clear:hover {
+            background-color: #5a6268;
         }
 
         input[type="text"], select {
-            padding: 12px;
-            border: 2px solid #4A90E2;
-            border-radius: 8px;
-            margin-right: 15px;
-            transition: border-color 0.3s;
-            width: 200px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 10px;
         }
 
-        input[type="text"]:focus, select:focus {
-            border-color: #3a7bd5;
-            outline: none;
-        }
-
-        .btn {
-            padding: 12px 20px;
+        button {
+            padding: 8px 12px;
             border: none;
-            border-radius: 8px;
+            border-radius: 4px;
             cursor: pointer;
-            font-weight: bold;
-            transition: background-color 0.3s, transform 0.2s;
         }
 
-        .btn-search {
-            background-color: #4A90E2;
+        button.btn-search {
+            background-color: #007bff;
             color: white;
         }
 
-        .btn-search:hover {
-            background-color: #3a7bd5;
-            transform: translateY(-2px);
+        button.btn-search:hover {
+            background-color: #0056b3;
         }
 
-        .task-table {
+        table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            background-color: #ffffff;
+            margin-bottom: 10px;
         }
 
-        .task-table th, .task-table td {
+        table th, table td {
             border: 1px solid #ddd;
-            padding: 12px;
+            padding: 8px;
             text-align: left;
         }
 
-        .task-table th {
-            background-color: #4A90E2;
+        table th {
+            background-color: #f4f4f4;
+        }
+
+        .btn {
+            text-decoration: none;
+            padding: 6px 5px;
             color: white;
-            font-size: 16px;
+            border-radius: 4px;
+            margin: 0 5px;
         }
 
-        .task-table tr:nth-child(even) {
-            background-color: #f9f9f9;
+        .btn-primary {
+            background-color: #007bff;
         }
 
-        .overdue {
-            background-color: #f8d7da;
+        .btn-primary:hover {
+            background-color: #0056b3;
         }
 
         .btn-edit {
-            background-color: #f39c12;
+            background-color: #007bff;
         }
 
         .btn-edit:hover {
-            background-color: #e67e22;
+            background-color: #0056b3;
         }
 
         .btn-delete {
-            background-color: #e74c3c;
+            background-color: #dc3545;
         }
 
         .btn-delete:hover {
-            background-color: #c0392b;
+            background-color: #c82333;
         }
 
         .btn-complete {
-            background-color: #2ecc71;
+            background-color: #28a745;
         }
 
         .btn-complete:hover {
-            background-color: #27ae60;
+            background-color: #218838;
         }
 
         .status-completed {
-            color: #2ecc71;
-            font-weight: bold;
+            color: green;
         }
 
         .status-pending {
-            color: #e74c3c;
-            font-weight: bold;
+            color: red;
         }
     </style>
 
     <script>
-        document.getElementById('category').addEventListener('change', function () {
+        document.getElementById('id_category').addEventListener('change', function () {
             document.getElementById('filter-form').submit();
         });
 
-        document.getElementById('priority').addEventListener('change', function () {
+        document.getElementById('id_priority').addEventListener('change', function () {
             document.getElementById('filter-form').submit();
         });
     </script>

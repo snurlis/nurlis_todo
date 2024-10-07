@@ -1,4 +1,5 @@
 from task.models import Task
+
 from django import forms
 from .models import Category, Priority
 
